@@ -19,11 +19,6 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-        with:
-          submodules: true
-
       - name: Setup node
         uses: actions/setup-node@v4
 
@@ -32,8 +27,13 @@ jobs:
         with:
           version: "8.15.2"
 
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
       - name: Install dependencies
-        run: pnpm ci
+        run: pnpm install
 
       - name: Build
         run: pnpm build
