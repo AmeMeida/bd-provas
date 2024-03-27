@@ -10,8 +10,6 @@ interface Props {
 export const getStaticPaths: GetStaticPaths = () => {
   const paths: GetStaticPathsResult = [];
 
-  console.log(folders["f"])
-
   Object.entries(folders).forEach(([materia, nest]) => {
     Object.entries(nest).forEach(([curso, nest]) => {
       const professors = Object.keys(nest);

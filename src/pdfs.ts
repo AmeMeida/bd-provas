@@ -42,8 +42,6 @@ function groupUrls(urls: string[]): NestedPaths {
     provas.push(parts[3]!)
   }
 
-  console.log(JSON.stringify(materia, null, 2))
-
   return materia;
 }
 
