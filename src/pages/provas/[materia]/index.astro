@@ -27,11 +27,10 @@ export const getStaticPaths: GetStaticPaths = () => {
 };
 
 const { cursos } = Astro.props;
-const materia = Astro.params.materia!;
 ---
 
 <Layout title="Cursos">
   <ul>
-    {cursos.map((curso) => <li><a href={`${materia}/${curso}`}>{curso}</a></li>)}
+    {cursos.map((curso) => <li><a href={curso}>{curso}</a></li>)}
   </ul>
 </Layout>

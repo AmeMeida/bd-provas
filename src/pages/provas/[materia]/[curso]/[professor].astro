@@ -30,14 +30,13 @@ export const getStaticPaths: GetStaticPaths = () => {
 };
 
 const { provas } = Astro.props;
-const professor = Astro.params.professor!;
 ---
 
 <ul>
   {
     provas.map((prova) => (
       <li>
-        <a href={`${professor}/${prova.replace(".pdf", "")}`}>
+        <a href={prova.replace(".pdf", "")}>
           {prova}
         </a>
       </li>

@@ -7,6 +7,6 @@ const materias = Object.keys(folders);
 
 <Layout title="Cursos">
   <ul>
-    {materias.map((materia) => <li><a href={`provas/${materia}`}>{materia}</a></li>)}
+    {materias.map((materia) => <li><a href={materia}>{materia}</a></li>)}
   </ul>
 </Layout>
