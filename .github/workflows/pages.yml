@@ -29,6 +29,8 @@ jobs:
 
       - uses: pnpm/action-setup@v3
         name: Install pnpm
+        with:
+          version: "8.15.2"
 
       - name: Install dependencies
         run: pnpm ci
