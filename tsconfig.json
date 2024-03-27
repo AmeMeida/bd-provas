@@ -1,6 +1,6 @@
 {
   "extends": "astro/tsconfigs/strictest",
-  "exclude": ["node_modules", ".astro", ".cache", "dist"],
+  "exclude": ["node_modules", ".astro", ".cache", "dist", "src/banco-de-provas"],
   "compilerOptions": {
     "verbatimModuleSyntax": true,
     "baseUrl": ".",
