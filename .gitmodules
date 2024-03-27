@@ -1,0 +1,3 @@
+[submodule "src/banco-de-provas"]
+	path = src/banco-de-provas
+	url = https://github.com/unicampers/banco-de-provas
