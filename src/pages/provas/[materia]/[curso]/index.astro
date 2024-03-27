@@ -1,0 +1,43 @@
+---
+import Layout from "@layouts/Layout.astro";
+import type { GetStaticPaths, GetStaticPathsResult } from "astro";
+import { folders } from "src/pdfs";
+
+interface Props {
+  professors: string[];
+}
+
+export const getStaticPaths: GetStaticPaths = () => {
+  const paths: GetStaticPathsResult = [];
+
+  console.log(folders["f"])
+
+  Object.entries(folders).forEach(([materia, nest]) => {
+    Object.entries(nest).forEach(([curso, nest]) => {
+      const professors = Object.keys(nest);
+
+      paths.push({
+        params: {
+          materia,
+          curso,
+        },
+        props: {
+          professors,
+        },
+      });
+    });
+  });
+
+  return paths;
+};
+
+const { professors } = Astro.props;
+
+const curso = Astro.params.curso!;
+---
+
+<Layout title="Professores do curso">
+  <ul>
+    {professors.map((professor) => <li><a href={`${curso}/${professor}`}>{professor}</a></li>)}
+  </ul>
+</Layout>

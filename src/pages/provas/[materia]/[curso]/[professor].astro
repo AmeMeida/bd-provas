@@ -1,0 +1,52 @@
+---
+import type { GetStaticPaths, GetStaticPathsResult } from "astro";
+import { folders } from "src/pdfs";
+
+interface Props {
+  provas: string[];
+}
+
+export const getStaticPaths: GetStaticPaths = () => {
+  const paths: GetStaticPathsResult = [];
+
+  Object.entries(folders).forEach(([materia, nest]) => {
+    Object.entries(nest).forEach(([curso, nest]) => {
+      Object.entries(nest).forEach(([professor, pdfs]) => {
+        paths.push({
+          params: {
+            materia,
+            curso,
+            professor,
+          },
+          props: {
+            provas: pdfs,
+          },
+        });
+      });
+    });
+  });
+
+  return paths;
+};
+
+const { provas } = Astro.props;
+const professor = Astro.params.professor!;
+---
+
+<ul>
+  {
+    provas.map((prova) => (
+      <li>
+        <a href={`${professor}/${prova.replace(".pdf", "")}`}>
+          {prova}
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  a {
+    text-transform: capitalize;
+  }
+</style>
