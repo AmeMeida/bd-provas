@@ -16,11 +16,12 @@ export const getStaticPaths: GetStaticPaths = async () => {
       params: {
         materia: paths[0],
         curso: paths[1],
-        prova: paths.slice(2).join("/"),
+        professor: paths[2],
+        prova: paths[3],
       },
       props: {
         file: fileUrl,
-        title: paths[paths.length - 1]
+        title: paths[paths.length - 1],
       },
     };
   });
@@ -30,7 +31,6 @@ const { file: filePath, title } = Astro.props;
 ---
 
 <Layout title={title}>
-
   <main>
     <h1>{title}</h1>
     <embed src={filePath} />
@@ -40,12 +40,12 @@ const { file: filePath, title } = Astro.props;
 <style>
   :global(*) {
     padding: 0;
-    margin: 0
+    margin: 0;
   }
 
   :global(body) {
     display: flex;
-    flex-direction: column;;
+    flex-direction: column;
     overflow: hidden;
   }
 

@@ -31,6 +31,6 @@ const { cursos } = Astro.props;
 
 <Layout title="Cursos">
   <ul>
-    {cursos.map((curso) => <li><a href={curso}>{curso}</a></li>)}
+    {cursos.map((curso) => <li><a href={`./${curso}`}>{curso}</a></li>)}
   </ul>
 </Layout>

@@ -1,12 +1,18 @@
 ---
-import Layout from "@layouts/Layout.astro"
+import Layout from "@layouts/Layout.astro";
 import { folders } from "src/pdfs";
 
 const materias = Object.keys(folders);
 ---
 
-<Layout title="Cursos">
+<Layout title="Matérias">
   <ul>
-    {materias.map((materia) => <li><a href={materia}>{materia}</a></li>)}
+    {
+      materias.map((materia) => (
+        <li>
+          <a href={`./${materia}`}>{materia}</a>
+        </li>
+      ))
+    }
   </ul>
 </Layout>

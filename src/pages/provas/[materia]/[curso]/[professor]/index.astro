@@ -36,7 +36,7 @@ const { provas } = Astro.props;
   {
     provas.map((prova) => (
       <li>
-        <a href={prova.replace(".pdf", "")}>
+        <a href={`./${prova.replace(".pdf", "")}`}>
           {prova}
         </a>
       </li>
