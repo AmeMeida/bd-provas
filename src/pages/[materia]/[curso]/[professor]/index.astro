@@ -1,6 +1,7 @@
 ---
+import Layout from "@layouts/Layout.astro";
 import type { GetStaticPaths, GetStaticPathsResult } from "astro";
-import { folders } from "src/pdfs";
+import { folders } from "@src/pdfs";
 
 interface Props {
   provas: string[];
@@ -32,17 +33,17 @@ export const getStaticPaths: GetStaticPaths = () => {
 const { provas } = Astro.props;
 ---
 
-<ul>
-  {
-    provas.map((prova) => (
-      <li>
-        <a href={`./${prova.replace(".pdf", "")}`}>
-          {prova}
-        </a>
-      </li>
-    ))
-  }
-</ul>
+<Layout title="Provas">
+  <ul>
+    {
+      provas.map((prova) => (
+        <li>
+          <a href={`./${prova.replace(".pdf", "")}`}>{prova}</a>
+        </li>
+      ))
+    }
+  </ul>
+</Layout>
 
 <style>
   a {

@@ -1,12 +1,19 @@
 {
   "extends": "astro/tsconfigs/strictest",
-  "exclude": ["node_modules", ".astro", ".cache", "dist", "src/banco-de-provas"],
+  "exclude": [
+    "node_modules",
+    ".astro",
+    ".cache",
+    "dist",
+    "src/banco-de-provas"
+  ],
   "compilerOptions": {
     "verbatimModuleSyntax": true,
     "baseUrl": ".",
     "paths": {
       "@components/*": ["src/components/*"],
-      "@layouts/*": ["src/layouts/*"]
+      "@layouts/*": ["src/layouts/*"],
+      "@src/*": ["src/*"]
     }
   }
 }

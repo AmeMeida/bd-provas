@@ -1,7 +1,7 @@
 ---
-import Layout from "@layouts/Layout.astro"
+import Layout from "@layouts/Layout.astro";
 import type { GetStaticPaths, GetStaticPathsResult } from "astro";
-import { folders } from "src/pdfs";
+import { folders } from "@src/pdfs";
 
 interface Props {
   cursos: string[];
@@ -31,6 +31,12 @@ const { cursos } = Astro.props;
 
 <Layout title="Cursos">
   <ul>
-    {cursos.map((curso) => <li><a href={`./${curso}`}>{curso}</a></li>)}
+    {
+      cursos.map((curso) => (
+        <li>
+          <a href={`./${curso}/`}>{curso}</a>
+        </li>
+      ))
+    }
   </ul>
 </Layout>
