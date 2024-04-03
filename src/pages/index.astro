@@ -10,7 +10,7 @@ const materias = Object.keys(folders);
     {
       materias.map((materia) => (
         <li>
-          <a href={`./${materia}/`}>{materia}</a>
+          <a href={`${import.meta.env.BASE_URL}/${materia}/`}>{materia}</a>
         </li>
       ))
     }

@@ -33,7 +33,10 @@ const { file: filePath, title } = Astro.props;
 <Layout title={title}>
   <main>
     <h1>{title}</h1>
-    <embed src={filePath} />
+    <object data={filePath} type="application/pdf">
+      <p>Seu navegador não tem suporte a PDF</p>
+      <a href={filePath} download={title}>Faça o download da prova</a>
+    </object>
   </main>
 </Layout>
 
@@ -55,7 +58,7 @@ const { file: filePath, title } = Astro.props;
     place-items: center;
   }
 
-  embed {
+  embed, iframe, object {
     width: 80dvw;
     height: 100dvh;
   }
