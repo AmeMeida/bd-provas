@@ -17,16 +17,24 @@ type Folder = {
   folders: Record<string, Folder>;
 };
 
-function folderize(paths: Record<string, string>) {
-  let folders: Record<string, Folder> = {};
+function folderize(paths: Record<string, string>): Folder {
+  const rootFolder: Folder = {
+    files: [],
+    folders: {},
+  };
 
   for (const [path, file] of Object.entries(paths)) {
     const paths = path.split("/");
 
+    if (paths.length === 1) {
+      rootFolder.files.push(file);
+      continue;
+    }
+
     paths.pop();
     const lastFolder = paths.pop()!;
 
-    let current = folders;
+    let current = rootFolder.folders;
 
     for (const p of paths) {
       if (!current[p]) {
@@ -43,7 +51,7 @@ function folderize(paths: Record<string, string>) {
     current[lastFolder].files.push(file);
   }
 
-  return folders;
+  return rootFolder;
 }
 
 export const folders = folderize(pdfs);
