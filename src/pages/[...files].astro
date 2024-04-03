@@ -14,7 +14,7 @@ export const getStaticPaths = (() => {
       params: { files: file[0] },
       props: {
         filePath: file[1],
-        fileName: file[0]!.split("/").pop()! + "." +  file[1]!.split(".").pop()!,
+        fileName: file[0]!.split("/").pop()! + "." + file[1]!.split(".").pop()!,
       },
     })),
   );
@@ -24,7 +24,9 @@ const { filePath, fileName } = Astro.props;
 ---
 
 <Layout title="Prova">
-  <h1>{fileName}</h1>
+  <h1>
+    <a class="contrast" href={filePath} download={fileName}>{fileName}</a>
+  </h1>
 
   <main>
     <object data={filePath} type="application/pdf">

@@ -23,37 +23,37 @@ const { files, folders: folderNames } = Astro.props;
 ---
 
 <Layout title="">
-  {
-    files && !!files.length && (
-      <>
-        <h2>Provas</h2>
-        <ul>
-          {files.map((file) => {
-            const filePath = file.split("/").pop();
-
-            return <li>
-              <a href={filePath + "/"}>{filePath}</a>
-            </li>
-          })}
-        </ul>
-      </>
-    )
-  }
-
-  {
-    folderNames && !!folderNames.length && (
-      <>
-        <h2>Pastas</h2>
-        <ul>
-          {folderNames.map((folder) => (
-            <li>
-              <a href={folder + "/"}>{folder}</a>
-            </li>
-          ))}
-        </ul>
-      </>
-    )
-  }
+  <section class="grid">
+    {
+      files && !!files.length && (
+        <article>
+          <header><strong>Provas</strong></header>
+          <ul>
+            {files.map((file) => {
+              const filePath = file.split("/").pop();
+              return <li>
+                <a href={filePath + "/"}>{filePath}</a>
+              </li>
+            })}
+          </ul>
+        </article>
+      )
+    }
+    {
+      folderNames && !!folderNames.length && (
+        <article>
+          <header><strong>Pastas</strong></header>
+          <ul>
+            {folderNames.map((folder) => (
+              <li>
+                <a href={folder + "/"}>{folder}</a>
+              </li>
+            ))}
+          </ul>
+        </article>
+      )
+    }
+  </section>
 </Layout>
 
 <style>
