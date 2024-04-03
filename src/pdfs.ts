@@ -1,48 +1,49 @@
-export const pdfs = Object.fromEntries(Object.entries(import.meta.glob("./banco-de-provas/**/*.pdf", {
-  query: "?url",
-  import: "default",
-  eager: true,
-}) as Record<string, string>).map(([path, file]) => {
-  let fixedPath = path.replace("./banco-de-provas/", "");
-  let paths = fixedPath.split("/")
+export const pdfs = Object.fromEntries(
+  Object.entries(
+    import.meta.glob("./banco-de-provas/**/*.pdf", {
+      query: "?url",
+      import: "default",
+      eager: true,
+    }) as Record<string, string>,
+  ).map(([path, file]) => {
+    const fixedPath = path.replace("./banco-de-provas/", "");
 
-  if (paths.length === 3) {
-    paths.push(paths[2]!)
-    paths[2] = "pdfs"
-  }
+    return [fixedPath, file];
+  }),
+);
 
-  return [paths.join("/"), file]
-}));
+type Folder = {
+  files: string[];
+  folders: Record<string, Folder>;
+};
 
-type NestedPaths = Record<string, Record<string, Record<string | "pdfs", string[]>>>
+function folderize(paths: Record<string, string>) {
+  let folders: Record<string, Folder> = {};
 
-function groupUrls(urls: string[]): NestedPaths {
-  const materia: NestedPaths = {};
+  for (const [path, file] of Object.entries(paths)) {
+    const paths = path.split("/");
 
-  for (const url of urls) {
-    const parts = url.split("/").filter(Boolean);
+    paths.pop();
+    const lastFolder = paths.pop()!;
 
-    if (!materia[parts[0]!])
-      materia[parts[0]!] = {}
+    let current = folders;
 
-    const curso = materia[parts[0]!]!
+    for (const p of paths) {
+      if (!current[p]) {
+        current[p] = { files: [], folders: {} };
+      }
 
-    if (!curso[parts[1]!]) {
-      curso[parts[1]!] = {}
+      current = current[p].folders;
     }
 
-    const professor = curso[parts[1]!]!;
-
-    if (!professor[parts[2]!]) {
-      professor[parts[2]!] = [];
+    if (!current[lastFolder]) {
+      current[lastFolder] = { files: [], folders: {} };
     }
 
-    const provas = professor[parts[2]!]!;
-
-    provas.push(parts[3]!)
+    current[lastFolder].files.push(file);
   }
 
-  return materia;
+  return folders;
 }
 
-export const folders = groupUrls(Object.keys(pdfs)) as NestedPaths
+export const folders = folderize(pdfs);
