@@ -1,6 +1,4 @@
-// import fs from "fs";
-
-export const pdfs = import.meta.glob("./banco-de-provas/**/*.pdf", {
+export const files = import.meta.glob("./banco-de-provas/**/*.pdf", {
   query: "?url",
   import: "default",
   eager: true,
@@ -29,10 +27,10 @@ function folderize(paths: Record<string, string>): Folder {
     paths.shift();
     paths.shift();
 
-    const pdfPath = paths.join("/").replace(/\.pdf$/, "");
+    const filePath = paths.join("/").replace(/\..+$/, "");
 
     if (paths.length === 1) {
-      rootFolder.files.push([pdfPath, file]);
+      rootFolder.files.push([filePath, file]);
       continue;
     }
 
@@ -53,7 +51,7 @@ function folderize(paths: Record<string, string>): Folder {
       current[lastFolder] = { files: [], folders: {} };
     }
 
-    current[lastFolder!]?.files.push([pdfPath, file]);
+    current[lastFolder!]?.files.push([filePath, file]);
   }
 
   return rootFolder;
@@ -76,6 +74,4 @@ function flattenFolder(folder: Folder, path: string = ""): FlatFolder[] {
   ];
 }
 
-export const folders = flattenFolder(folderize(pdfs));
-
-// fs.writeFileSync("src/folders.json", JSON.stringify(folders, null, 2));
+export const folders = flattenFolder(folderize(files));
