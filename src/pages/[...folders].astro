@@ -26,13 +26,13 @@ const { files, folders: folderNames } = Astro.props;
   <section class="grid">
     {
       files && !!files.length && (
-        <article>
+        <article transition:name="files" transition:animate="initial">
           <header><strong>Provas</strong></header>
           <ul>
             {files.map((file) => {
               const filePath = file.split("/").pop();
               return <li>
-                <a href={filePath + "/"}>{filePath}</a>
+                <a href={filePath + "/"} data-astro-prefetch>{filePath}</a>
               </li>
             })}
           </ul>
@@ -41,12 +41,12 @@ const { files, folders: folderNames } = Astro.props;
     }
     {
       folderNames && !!folderNames.length && (
-        <article>
+        <article transition:name="folders" transition:animate="initial">
           <header><strong>Pastas</strong></header>
           <ul>
             {folderNames.map((folder) => (
               <li>
-                <a href={folder + "/"}>{folder}</a>
+                <a href={folder + "/"} data-astro-prefetch>{folder}</a>
               </li>
             ))}
           </ul>
