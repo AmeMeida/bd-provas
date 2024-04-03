@@ -1,16 +1,8 @@
-export const pdfs = Object.fromEntries(
-  Object.entries(
-    import.meta.glob("./banco-de-provas/**/*.pdf", {
-      query: "?url",
-      import: "default",
-      eager: true,
-    }) as Record<string, string>,
-  ).map(([path, file]) => {
-    const fixedPath = path.replace("./banco-de-provas/", "");
-
-    return [fixedPath, file];
-  }),
-);
+export const pdfs = import.meta.glob("./banco-de-provas/**/*.pdf", {
+  query: "?url",
+  import: "default",
+  eager: true,
+}) as Record<string, string>;
 
 type Folder = {
   files: string[];
@@ -25,6 +17,9 @@ function folderize(paths: Record<string, string>): Folder {
 
   for (const [path, file] of Object.entries(paths)) {
     const paths = path.split("/");
+
+    paths.shift();
+    paths.shift();
 
     if (paths.length === 1) {
       rootFolder.files.push(file);
