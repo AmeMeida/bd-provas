@@ -1,0 +1,23 @@
+---
+const url = Astro.url.pathname.split("/").filter(Boolean);
+---
+
+<nav aria-label="breadcrumb">
+  <ul>
+    {
+      url.map((path, i) => {
+        const href = `/${url.slice(0, i + 1).join("/")}/`;
+
+        return (
+          <li>
+            {i === url.length - 1 ? (
+              <span>{path}</span>
+            ) : (
+              <a href={href}>{path}</a>
+            )}
+          </li>
+        );
+      })
+    }
+  </ul>
+</nav>
