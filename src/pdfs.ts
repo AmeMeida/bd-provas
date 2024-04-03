@@ -1,12 +1,20 @@
+// import fs from "fs";
+
 export const pdfs = import.meta.glob("./banco-de-provas/**/*.pdf", {
   query: "?url",
   import: "default",
   eager: true,
 }) as Record<string, string>;
 
-type Folder = {
-  files: string[];
+export type Folder = {
+  files: [string, string][];
   folders: Record<string, Folder>;
+};
+
+export type FlatFolder = {
+  path: string;
+  files: [string, string][];
+  folders: string[];
 };
 
 function folderize(paths: Record<string, string>): Folder {
@@ -21,8 +29,10 @@ function folderize(paths: Record<string, string>): Folder {
     paths.shift();
     paths.shift();
 
+    const pdfPath = paths.join("/").replace(/\.pdf$/, "");
+
     if (paths.length === 1) {
-      rootFolder.files.push(file);
+      rootFolder.files.push([pdfPath, file]);
       continue;
     }
 
@@ -32,21 +42,40 @@ function folderize(paths: Record<string, string>): Folder {
     let current = rootFolder.folders;
 
     for (const p of paths) {
-      if (!current[p]) {
-        current[p] = { files: [], folders: {} };
+      if (!current[p!]) {
+        current[p!] = { files: [], folders: {} };
       }
 
-      current = current[p].folders;
+      current = current[p!]!.folders!;
     }
 
     if (!current[lastFolder]) {
       current[lastFolder] = { files: [], folders: {} };
     }
 
-    current[lastFolder].files.push(file);
+    current[lastFolder!]?.files.push([pdfPath, file]);
   }
 
   return rootFolder;
 }
 
-export const folders = folderize(pdfs);
+function flattenFolder(folder: Folder, path: string = ""): FlatFolder[] {
+  const folders = Object.entries(folder.folders).flatMap(
+    ([folderName, folder]) => {
+      return flattenFolder(folder, `${path}/${folderName}`);
+    },
+  );
+
+  return [
+    {
+      path: path || "/",
+      files: folder.files,
+      folders: Object.keys(folder.folders),
+    },
+    ...folders,
+  ];
+}
+
+export const folders = flattenFolder(folderize(pdfs));
+
+// fs.writeFileSync("src/folders.json", JSON.stringify(folders, null, 2));

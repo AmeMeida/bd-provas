@@ -1,0 +1,66 @@
+---
+import type { GetStaticPaths } from "astro";
+import Layout from "../layouts/Layout.astro";
+import { folders } from "@src/pdfs";
+
+interface Props {
+  folders: string[];
+  files: string[];
+}
+
+export const getStaticPaths = (() => {
+  return folders.map((folder) => ({
+    params: { folders: folder.path },
+    props: {
+      ...folder,
+      files: folder.files.map((file) => file[0]),
+      path: undefined,
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+const { files, folders: folderNames } = Astro.props;
+---
+
+<Layout title="">
+  {
+    files && !!files.length && (
+      <>
+        <h2>Provas</h2>
+        <ul>
+          {files.map((file) => {
+            const filePath = file.split("/").pop();
+
+            return <li>
+              <a href={filePath + "/"}>{filePath}</a>
+            </li>
+          })}
+        </ul>
+      </>
+    )
+  }
+
+  {
+    folderNames && !!folderNames.length && (
+      <>
+        <h2>Pastas</h2>
+        <ul>
+          {folderNames.map((folder) => (
+            <li>
+              <a href={folder + "/"}>{folder}</a>
+            </li>
+          ))}
+        </ul>
+      </>
+    )
+  }
+</Layout>
+
+<style>
+  embed,
+  iframe,
+  object {
+    width: 80dvw;
+    height: 100dvh;
+  }
+</style>

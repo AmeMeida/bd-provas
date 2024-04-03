@@ -1,0 +1,50 @@
+---
+import type { GetStaticPaths } from "astro";
+import Layout from "../layouts/Layout.astro";
+import { folders } from "@src/pdfs";
+
+interface Props {
+  filePath: string;
+  fileName: string;
+}
+
+export const getStaticPaths = (() => {
+  return folders.flatMap((folder) =>
+    folder.files.map((file) => ({
+      params: { files: file[0] },
+      props: {
+        filePath: file[1],
+        fileName: file[0]!.split("/").pop()! + "." +  file[1]!.split(".").pop()!,
+      },
+    })),
+  );
+}) satisfies GetStaticPaths;
+
+const { filePath, fileName } = Astro.props;
+---
+
+<Layout title="Prova">
+  <h1>{fileName}</h1>
+
+  <main>
+    <object data={filePath} type="application/pdf">
+      <p>Seu navegador não tem suporte a PDF</p>
+      <a href={filePath} download={fileName}> Faça o download da prova </a>
+    </object>
+  </main>
+</Layout>
+
+<style>
+  main {
+    flex: 1;
+    display: grid;
+    place-items: center;
+  }
+
+  embed,
+  iframe,
+  object {
+    width: 80dvw;
+    height: 100dvh;
+  }
+</style>
