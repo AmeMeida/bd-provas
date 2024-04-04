@@ -1,36 +1,76 @@
-export const files = import.meta.glob("./banco-de-provas/**/*.pdf", {
+export const referenceFiles = import.meta.glob("./banco-de-provas/*/**/*.pdf", {
   query: "?url",
   import: "default",
   eager: true,
 }) as Record<string, string>;
 
+export const inlineFiles = import.meta.glob("./banco-de-provas/*/**/*.{md,mdx,c}", {
+  query: "?raw",
+  import: "default",  
+  eager: true,
+}) as Record<string, string>;
+
 export type Folder = {
-  files: [string, string][];
+  slug: string;
+  files: File[];
   folders: Record<string, Folder>;
 };
 
 export type FlatFolder = {
-  path: string;
-  files: [string, string][];
-  folders: string[];
+  slug: string;
+  files: File[];
+  folders: {
+    name: string;
+    slug: string;
+  }[];
 };
+
+export type File = {
+  name: string;
+  slug: string;
+} & (
+  | {
+      type: "reference";
+      uri: string;
+    }
+  | {
+      type: "inline";
+      content: string;
+    }
+);
+
+const referenceFormats = [".pdf", ".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx"];
+// const inlineFormats = [".md", ".mdx", ".c", ".txt", ".html", ".js", ".ts", ".json"];
 
 function folderize(paths: Record<string, string>): Folder {
   const rootFolder: Folder = {
+    slug: "",
     files: [],
     folders: {},
   };
 
-  for (const [path, file] of Object.entries(paths)) {
+  for (const [path, fileUrl] of Object.entries(paths)) {
     const paths = path.split("/");
 
     paths.shift();
     paths.shift();
 
-    const filePath = paths.join("/").replace(/\..+$/, "");
+    const extension = "." + paths[paths.length - 1]!.split(".").pop()!;
+
+    const file: File = {
+      name: paths[paths.length - 1]!,
+      slug: paths.join("/").replace(/\..+$/, ""),
+      ...(referenceFormats.includes(extension) ? {
+        type: "reference",
+        uri: fileUrl,
+      } : {
+        type: "inline",
+        content: fileUrl
+      }),
+    };
 
     if (paths.length === 1) {
-      rootFolder.files.push([filePath, file]);
+      rootFolder.files.push(file);
       continue;
     }
 
@@ -41,17 +81,25 @@ function folderize(paths: Record<string, string>): Folder {
 
     for (const p of paths) {
       if (!current[p!]) {
-        current[p!] = { files: [], folders: {} };
+        current[p!] = {
+          slug: paths.slice(0, paths.indexOf(p!) + 1).join("/"),
+          files: [],
+          folders: {},
+        };
       }
 
       current = current[p!]!.folders!;
     }
 
     if (!current[lastFolder]) {
-      current[lastFolder] = { files: [], folders: {} };
+      current[lastFolder] = {
+        slug: paths.join("/") + "/" + lastFolder,
+        files: [],
+        folders: {},
+      };
     }
 
-    current[lastFolder!]?.files.push([filePath, file]);
+    current[lastFolder!]?.files.push(file);
   }
 
   return rootFolder;
@@ -60,18 +108,21 @@ function folderize(paths: Record<string, string>): Folder {
 function flattenFolder(folder: Folder, path: string = ""): FlatFolder[] {
   const folders = Object.entries(folder.folders).flatMap(
     ([folderName, folder]) => {
-      return flattenFolder(folder, `${path}/${folderName}`);
+      return flattenFolder(folder, path ? `${path}/${folderName}` : folderName);
     },
   );
 
   return [
     {
-      path: path || "/",
+      slug: path,
       files: folder.files,
-      folders: Object.keys(folder.folders),
+      folders: Object.entries(folder.folders).map(([folderName, folder]) => ({
+        name: folderName,
+        slug: folder.slug,
+      })),
     },
     ...folders,
   ];
 }
 
-export const folders = flattenFolder(folderize(files));
+export const folders = flattenFolder(folderize({...referenceFiles, ...inlineFiles}));

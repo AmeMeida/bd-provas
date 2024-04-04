@@ -1,0 +1,44 @@
+---
+import { type File } from "@src/pdfs";
+import { Code } from "astro:components";
+
+interface Props {
+  file: File;
+}
+
+const mime: Record<string, string> = {
+  ".pdf": "application/pdf",
+  ".md": "text/markdown",
+  ".txt": "text/plain",
+  ".html": "text/html",
+  ".css": "text/css",
+  ".js": "text/javascript",
+  ".json": "application/json",
+  ".xml": "application/xml",
+  ".c": "text/x-c"
+};
+
+const { file } = Astro.props;
+---
+
+{
+  file.type === "reference" ? (
+    <object data={file.uri} type={mime[file.name.split(".").pop()!]}>
+      <p>Seu navegador não tem suporte a esse formato de arquivo.</p>
+      <a href={file.uri} download={file.name}>
+        Faça o download da prova
+      </a>
+    </object>
+  ) : (
+    <Code code={file.content} lang={file.name.split(".").pop() as any} />
+  )
+}
+
+<style>
+  embed,
+  iframe,
+  object {
+    width: 100%;
+    height: 1455px;
+  }
+</style>

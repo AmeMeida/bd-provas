@@ -1,25 +1,28 @@
 ---
 import type { GetStaticPaths } from "astro";
 import Layout from "../layouts/Layout.astro";
-import { folders } from "@src/pdfs";
+import { folders, type File } from "@src/pdfs";
 
 interface Props {
-  folders: string[];
-  files: string[];
+  folders: {
+    name: string;
+    slug: string;
+  }[];
+  files: File[];
 }
 
 export const getStaticPaths = (() => {
   return folders.map((folder) => ({
-    params: { folders: folder.path },
+    params: { folders: folder.slug },
     props: {
-      ...folder,
-      files: folder.files.map((file) => file[0]),
+      folders: folder.folders,
+      files: folder.files,
       path: undefined,
     },
   }));
 }) satisfies GetStaticPaths;
 
-const { files, folders: folderNames } = Astro.props;
+const { files, folders: folderList } = Astro.props;
 ---
 
 <Layout title="">
@@ -27,26 +30,29 @@ const { files, folders: folderNames } = Astro.props;
     {
       files && !!files.length && (
         <article>
-          <header><strong>Provas</strong></header>
+          <header>
+            <strong>Provas</strong>
+          </header>
           <ul>
-            {files.map((file) => {
-              const filePath = file.split("/").pop();
-              return <li>
-                <a href={filePath + "/"}>{filePath}</a>
+            {files.map((file) => (
+              <li>
+                <a href={file.slug}>{file.name.replace(/\..+$/, "")}</a>
               </li>
-            })}
+            ))}
           </ul>
         </article>
       )
     }
     {
-      folderNames && !!folderNames.length && (
+      folderList && !!folderList.length && (
         <article>
-          <header><strong>Pastas</strong></header>
+          <header>
+            <strong>Pastas</strong>
+          </header>
           <ul>
-            {folderNames.map((folder) => (
+            {folderList.map(({ name, slug }) => (
               <li>
-                <a href={folder + "/"}>{folder}</a>
+                <a href={slug}>{name}</a>
               </li>
             ))}
           </ul>

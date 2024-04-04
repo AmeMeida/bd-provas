@@ -1,48 +1,41 @@
 ---
 import type { GetStaticPaths } from "astro";
 import Layout from "../layouts/Layout.astro";
-import { folders } from "@src/pdfs";
+import { folders, type File } from "@src/pdfs";
+import FileDisplay from "@components/FileDisplay.astro";
 
-interface Props {
-  filePath: string;
-  fileName: string;
+type Props = {
+  file: File
 }
 
 export const getStaticPaths = (() => {
   return folders.flatMap((folder) =>
     folder.files.map((file) => ({
-      params: { files: file[0] },
+      params: { files: file.slug },
       props: {
-        filePath: file[1],
-        fileName: file[0]!.split("/").pop()! + "." + file[1]!.split(".").pop()!,
-      },
+        file
+      } satisfies Props,
     })),
   );
 }) satisfies GetStaticPaths;
 
-const { filePath, fileName } = Astro.props;
-const fileSlug = fileName.split(".")[0];
+const { file } = Astro.props;
+const fileSlug = file.name.replace(/\..+$/, "");
 ---
 
 <Layout title="Prova">
   <hgroup>
     <h1>{fileSlug}</h1>
-    <a class="contrast" href={filePath} download={fileName}>Download</a>
+    {
+      file.type === "reference" && (
+        <a class="contrast" href={file.uri} download={file.name}>
+          Download
+        </a>
+      )
+    }
   </hgroup>
 
   <section>
-    <object data={filePath} type="application/pdf">
-      <p>Seu navegador não tem suporte a PDF</p>
-      <a href={filePath} download={fileName}> Faça o download da prova </a>
-    </object>
+    <FileDisplay file={file} />
   </section>
 </Layout>
-
-<style>
-  embed,
-  iframe,
-  object {
-    width: 100%;
-    height: 1455px;
-  }
-</style>
