@@ -9423,6 +9423,12 @@
         "content": "#include <stdio.h>\n\n#define MAX 100\n\nfloat modulo(float number)\n{\n\tif(number < 0) return -number;\n\treturn number;\n}\n\nint main()\n{\n\tint lin, col, i, j, k;\n\tint matriz[MAX][MAX];\n\tfloat proportion;\n\tint found = 0;\n\t\n\tprintf(\"Digite as dimensões (m e n) da matriz: \");\n\tscanf(\" %d %d\", &lin, &col);\n\tprintf(\"Digite a matriz:\\n\");\n\t\n\tfor(i=0; i<lin; i++)\n\t\tfor(j=0; j<col; j++)\n\t\t\tscanf(\" %d\", &(matriz[i][j]));\n\n\tfor(i=0; i<lin; i++)\n\t\tfor(j=i+1; j<lin; j++)\n\t\t{\n\t\t\tproportion = 1.0*matriz[i][0]/matriz[j][0];\n\t\t\tk=1;\n\t\t\twhile(k < col && (modulo((1.0*matriz[i][k]/matriz[j][k]) - proportion) < 0.000001))\n\t\t\t\tk++; /* While acaba quando encontrar uma proporção diferente */\n\t\t\tif(k == col)\n\t\t\t{\n\t\t\t\tfound = 1; /* Identifica que encontrou alguma linha linearmente dependente */\n\t\t\t\tprintf(\"Linhas %d e %d são dependentes com razão %.3f\\n\", i+1, j+1, proportion);\n\t\t\t}\n\t\t}\n\t\n\tif(!found)\n\t\tprintf(\"Nenhuma linha é dependente de outra linha\\n\");\n\t\n\treturn 0;\n}\n"
       },
       {
+        "name": "mc102-p2-2007s2-islene-res.pdf",
+        "slug": "mc/mc102/islene/mc102-p2-2007s2-islene-res",
+        "uri": "/src/banco-de-provas/mc/mc102/islene/mc102-p2-2007s2-islene-res.pdf",
+        "type": "reference"
+      },
+      {
         "name": "mc102-p2-2007s2-islene.pdf",
         "slug": "mc/mc102/islene/mc102-p2-2007s2-islene",
         "uri": "/src/banco-de-provas/mc/mc102/islene/mc102-p2-2007s2-islene.pdf",

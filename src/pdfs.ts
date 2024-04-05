@@ -1,19 +1,31 @@
 import type { AstroComponentFactory } from "astro/runtime/server/index.js";
 import { markdownFiles } from "./markdown.astro";
 
-export const inlineFiles = import.meta.glob(
-  "./banco-de-provas/*/**/*.{c,js,java,py}",
-  {
-    query: "?raw",
-    import: "default",
-    eager: true,
-  },
-) as Record<string, string>;
+export function slugify(text: string) {
+  return text
+    .toString()
+    .normalize("NFD")
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/&/g, "-and-")
+    .replace(/[^\w-\/]+/g, "")
+    .replace(/--+/g, "-");
+}
 
 export const referenceFiles = import.meta.glob(
   "./banco-de-provas/*/**/*.{pdf,md,mdx,c,js,java,py}",
   {
     query: "?url",
+    import: "default",
+    eager: true,
+  },
+) as Record<string, string>;
+
+export const inlineFiles = import.meta.glob(
+  "./banco-de-provas/*/**/*.{c,js,java,py}",
+  {
+    query: "?raw",
     import: "default",
     eager: true,
   },
@@ -63,9 +75,7 @@ export type File = {
 // ];
 const inlineFormats = [".c", ".txt", ".html", ".js", ".ts", ".json"];
 
-export function folderize(
-  paths: Record<string, string>,
-): Folder {
+export function folderize(paths: Record<string, string>): Folder {
   const rootFolder: Folder = {
     slug: "",
     files: [],
@@ -82,17 +92,21 @@ export function folderize(
 
     const file: File = {
       name: paths[paths.length - 1]!,
-      slug: paths.join("/").replace(/\..+$/, ""),
+      slug: slugify(paths.join("/").replace(/\..+$/, "")),
       uri: fileUrl,
-      ...(inlineFormats.includes(extension) ? {
-        type: "inline",
-        content: inlineFiles[path]!,
-      } : extension === ".md" || extension === ".mdx" ? {
-        type: "markdown",
-        content: markdownFiles[path]!.Content as AstroComponentFactory,
-      } : {
-        type: "reference",
-      })
+      ...(inlineFormats.includes(extension)
+        ? {
+            type: "inline",
+            content: inlineFiles[path]!,
+          }
+        : extension === ".md" || extension === ".mdx"
+          ? {
+              type: "markdown",
+              content: markdownFiles[path]?.Content as AstroComponentFactory,
+            }
+          : {
+              type: "reference",
+            }),
     };
 
     if (paths.length === 1) {
@@ -108,7 +122,7 @@ export function folderize(
     for (const p of paths) {
       if (!current[p!]) {
         current[p!] = {
-          slug: paths.slice(0, paths.indexOf(p!) + 1).join("/"),
+          slug: slugify(paths.slice(0, paths.indexOf(p!) + 1).join("/")),
           files: [],
           folders: {},
         };
@@ -119,7 +133,7 @@ export function folderize(
 
     if (!current[lastFolder]) {
       current[lastFolder] = {
-        slug: paths.join("/") + "/" + lastFolder,
+        slug: slugify(paths.join("/") + "/" + lastFolder),
         files: [],
         folders: {},
       };
@@ -140,17 +154,17 @@ export function flattenFolder(folder: Folder, path: string = ""): FlatFolder[] {
 
   return [
     {
-      slug: path || "/",
+      slug: !!path ? slugify(path) : "/",
       files: folder.files,
       folders: Object.entries(folder.folders).map(([folderName, folder]) => ({
         name: folderName,
-        slug: folder.slug,
+        slug: slugify(folder.slug)
       })),
     },
     ...folders,
   ];
 }
 
-export const folders = flattenFolder(
-  folderize(referenceFiles),
-);
+const preFolders = folderize(referenceFiles);
+
+export const folders = flattenFolder(preFolders);

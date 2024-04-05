@@ -6,7 +6,7 @@ const url = Astro.url.pathname.split("/").filter(Boolean);
   <ul>
     {
       url.map((path, i) => {
-        const href = `/${url.slice(0, i + 1).join("/")}`;
+        const href = `${url.slice(1, i + 1).join("/")}`;
 
         return (
           <li>

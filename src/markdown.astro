@@ -3,9 +3,12 @@ import type { MarkdownInstance } from "astro";
 
 export const markdownFiles = Object.fromEntries(
   (
-    await Astro.glob<MarkdownInstance<Record<string, unknown>>>("./banco-de-provas/**/*/*.{md,mdx}")
+    await Astro.glob<MarkdownInstance<Record<string, unknown>>>(
+      "./banco-de-provas/**/*/*.{md,mdx}",
+    )
   ).map((mdFile) => [
-    "./banco-de-provas/" + mdFile.file.match(/.+\/banco-de-provas\/(.+?.(?:md|mdx))/)?.[1],
+    "./banco-de-provas/" +
+      mdFile.file.match(/.+\/banco-de-provas\/(.+?.(?:md|mdx))/)?.[1],
     mdFile,
   ]),
 );
