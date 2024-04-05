@@ -15,10 +15,12 @@ const mime: Record<string, string> = {
   ".js": "text/javascript",
   ".json": "application/json",
   ".xml": "application/xml",
-  ".c": "text/x-c"
+  ".c": "text/x-c",
 };
 
 const { file } = Astro.props;
+
+const Content: any = (file as any).Content;
 ---
 
 {
@@ -29,6 +31,8 @@ const { file } = Astro.props;
         Faça o download da prova
       </a>
     </object>
+  ) : file.type === "markdown" ? (
+    <Content />
   ) : (
     <Code code={file.content} lang={file.name.split(".").pop() as any} />
   )

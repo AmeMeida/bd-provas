@@ -1,22 +1,26 @@
 ---
-import type { GetStaticPaths } from "astro";
+import type { GetStaticPaths, GetStaticPathsResult } from "astro";
 import Layout from "../layouts/Layout.astro";
 import { folders, type File } from "@src/pdfs";
 import FileDisplay from "@components/FileDisplay.astro";
+import type { AstroComponentFactory } from "astro/runtime/server/index.js";
 
 type Props = {
-  file: File
-}
+  file: File;
+  Content?: AstroComponentFactory;
+};
 
 export const getStaticPaths = (() => {
-  return folders.flatMap((folder) =>
+  const paths: GetStaticPathsResult = folders.flatMap((folder) =>
     folder.files.map((file) => ({
       params: { files: file.slug },
       props: {
-        file
+        file,
       } satisfies Props,
     })),
   );
+
+  return paths;
 }) satisfies GetStaticPaths;
 
 const { file } = Astro.props;

@@ -1,6 +1,6 @@
 ---
 import type { GetStaticPaths } from "astro";
-import Layout from "../layouts/Layout.astro";
+import Layout from "@layouts/Layout.astro";
 import { folders, type File } from "@src/pdfs";
 
 interface Props {
@@ -11,7 +11,7 @@ interface Props {
   files: File[];
 }
 
-export const getStaticPaths = (() => {
+export const getStaticPaths = (async () => {
   return folders.map((folder) => ({
     params: { folders: folder.slug },
     props: {

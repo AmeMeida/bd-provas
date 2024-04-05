@@ -1,14 +1,21 @@
+import type { MarkdownInstance } from "astro";
+import type { AstroComponentFactory } from "astro/runtime/server/index.js";
+import { markdownFiles } from "./markdown.astro";
+
 export const referenceFiles = import.meta.glob("./banco-de-provas/*/**/*.pdf", {
   query: "?url",
   import: "default",
   eager: true,
 }) as Record<string, string>;
 
-export const inlineFiles = import.meta.glob("./banco-de-provas/*/**/*.{md,mdx,c}", {
-  query: "?raw",
-  import: "default",  
-  eager: true,
-}) as Record<string, string>;
+export const inlineFiles = import.meta.glob(
+  "./banco-de-provas/*/**/*.{c,js,java,py}",
+  {
+    query: "?raw",
+    import: "default",
+    eager: true,
+  },
+) as Record<string, string>;
 
 export type Folder = {
   slug: string;
@@ -37,12 +44,26 @@ export type File = {
       type: "inline";
       content: string;
     }
+  | {
+      type: "markdown";
+      Content: AstroComponentFactory;
+    }
 );
 
-const referenceFormats = [".pdf", ".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx"];
+export const referenceFormats = [
+  ".pdf",
+  ".doc",
+  ".docx",
+  ".ppt",
+  ".pptx",
+  ".xls",
+  ".xlsx",
+];
 // const inlineFormats = [".md", ".mdx", ".c", ".txt", ".html", ".js", ".ts", ".json"];
 
-function folderize(paths: Record<string, string>): Folder {
+export function folderize(
+  paths: Record<string, string | MarkdownInstance<any>>,
+): Folder {
   const rootFolder: Folder = {
     slug: "",
     files: [],
@@ -60,13 +81,20 @@ function folderize(paths: Record<string, string>): Folder {
     const file: File = {
       name: paths[paths.length - 1]!,
       slug: paths.join("/").replace(/\..+$/, ""),
-      ...(referenceFormats.includes(extension) ? {
-        type: "reference",
-        uri: fileUrl,
-      } : {
-        type: "inline",
-        content: fileUrl
-      }),
+      ...(typeof fileUrl === "object"
+        ? {
+            type: "markdown",
+            Content: (fileUrl as MarkdownInstance<any>).Content,
+          }
+        : referenceFormats.includes(extension)
+          ? {
+              type: "reference",
+              uri: fileUrl,
+            }
+          : {
+              type: "inline",
+              content: fileUrl,
+            }),
     };
 
     if (paths.length === 1) {
@@ -105,7 +133,7 @@ function folderize(paths: Record<string, string>): Folder {
   return rootFolder;
 }
 
-function flattenFolder(folder: Folder, path: string = ""): FlatFolder[] {
+export function flattenFolder(folder: Folder, path: string = ""): FlatFolder[] {
   const folders = Object.entries(folder.folders).flatMap(
     ([folderName, folder]) => {
       return flattenFolder(folder, path ? `${path}/${folderName}` : folderName);
@@ -114,7 +142,7 @@ function flattenFolder(folder: Folder, path: string = ""): FlatFolder[] {
 
   return [
     {
-      slug: path,
+      slug: path || "/",
       files: folder.files,
       folders: Object.entries(folder.folders).map(([folderName, folder]) => ({
         name: folderName,
@@ -125,4 +153,6 @@ function flattenFolder(folder: Folder, path: string = ""): FlatFolder[] {
   ];
 }
 
-export const folders = flattenFolder(folderize({...referenceFiles, ...inlineFiles}));
+export const folders = flattenFolder(
+  folderize({ ...referenceFiles, ...inlineFiles, ...markdownFiles }),
+);
