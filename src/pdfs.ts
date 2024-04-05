@@ -1,17 +1,19 @@
-import type { MarkdownInstance } from "astro";
 import type { AstroComponentFactory } from "astro/runtime/server/index.js";
 import { markdownFiles } from "./markdown.astro";
-
-export const referenceFiles = import.meta.glob("./banco-de-provas/*/**/*.pdf", {
-  query: "?url",
-  import: "default",
-  eager: true,
-}) as Record<string, string>;
 
 export const inlineFiles = import.meta.glob(
   "./banco-de-provas/*/**/*.{c,js,java,py}",
   {
     query: "?raw",
+    import: "default",
+    eager: true,
+  },
+) as Record<string, string>;
+
+export const referenceFiles = import.meta.glob(
+  "./banco-de-provas/*/**/*.{pdf,md,mdx,c,js,java,py}",
+  {
+    query: "?url",
     import: "default",
     eager: true,
   },
@@ -35,10 +37,10 @@ export type FlatFolder = {
 export type File = {
   name: string;
   slug: string;
+  uri: string;
 } & (
   | {
       type: "reference";
-      uri: string;
     }
   | {
       type: "inline";
@@ -46,23 +48,23 @@ export type File = {
     }
   | {
       type: "markdown";
-      Content: AstroComponentFactory;
+      content: AstroComponentFactory;
     }
 );
 
-export const referenceFormats = [
-  ".pdf",
-  ".doc",
-  ".docx",
-  ".ppt",
-  ".pptx",
-  ".xls",
-  ".xlsx",
-];
-// const inlineFormats = [".md", ".mdx", ".c", ".txt", ".html", ".js", ".ts", ".json"];
+// export const referenceFormats = [
+//   ".pdf",
+//   ".doc",
+//   ".docx",
+//   ".ppt",
+//   ".pptx",
+//   ".xls",
+//   ".xlsx",
+// ];
+const inlineFormats = [".c", ".txt", ".html", ".js", ".ts", ".json"];
 
 export function folderize(
-  paths: Record<string, string | MarkdownInstance<any>>,
+  paths: Record<string, string>,
 ): Folder {
   const rootFolder: Folder = {
     slug: "",
@@ -81,20 +83,16 @@ export function folderize(
     const file: File = {
       name: paths[paths.length - 1]!,
       slug: paths.join("/").replace(/\..+$/, ""),
-      ...(typeof fileUrl === "object"
-        ? {
-            type: "markdown",
-            Content: (fileUrl as MarkdownInstance<any>).Content,
-          }
-        : referenceFormats.includes(extension)
-          ? {
-              type: "reference",
-              uri: fileUrl,
-            }
-          : {
-              type: "inline",
-              content: fileUrl,
-            }),
+      uri: fileUrl,
+      ...(inlineFormats.includes(extension) ? {
+        type: "inline",
+        content: inlineFiles[path]!,
+      } : extension === ".md" || extension === ".mdx" ? {
+        type: "markdown",
+        content: markdownFiles[path]!.Content as AstroComponentFactory,
+      } : {
+        type: "reference",
+      })
     };
 
     if (paths.length === 1) {
@@ -154,5 +152,5 @@ export function flattenFolder(folder: Folder, path: string = ""): FlatFolder[] {
 }
 
 export const folders = flattenFolder(
-  folderize({ ...referenceFiles, ...inlineFiles, ...markdownFiles }),
+  folderize(referenceFiles),
 );

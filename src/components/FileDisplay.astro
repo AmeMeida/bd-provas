@@ -19,8 +19,6 @@ const mime: Record<string, string> = {
 };
 
 const { file } = Astro.props;
-
-const Content: any = (file as any).Content;
 ---
 
 {
@@ -32,7 +30,7 @@ const Content: any = (file as any).Content;
       </a>
     </object>
   ) : file.type === "markdown" ? (
-    <Content />
+    <file.content />
   ) : (
     <Code code={file.content} lang={file.name.split(".").pop() as any} />
   )

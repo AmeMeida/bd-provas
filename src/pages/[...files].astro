@@ -30,13 +30,7 @@ const fileSlug = file.name.replace(/\..+$/, "");
 <Layout title="Prova">
   <hgroup>
     <h1>{fileSlug}</h1>
-    {
-      file.type === "reference" && (
-        <a class="contrast" href={file.uri} download={file.name}>
-          Download
-        </a>
-      )
-    }
+    <a class="contrast" href={file.uri} download={file.name}> Download </a>
   </hgroup>
 
   <section>
