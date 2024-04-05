@@ -158,7 +158,7 @@ export function flattenFolder(folder: Folder, path: string = ""): FlatFolder[] {
       files: folder.files,
       folders: Object.entries(folder.folders).map(([folderName, folder]) => ({
         name: folderName,
-        slug: slugify(folder.slug)
+        slug: slugify(folder.slug),
       })),
     },
     ...folders,

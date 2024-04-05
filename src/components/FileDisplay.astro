@@ -30,7 +30,7 @@ const { file } = Astro.props;
       </a>
     </object>
   ) : file.type === "markdown" ? (
-    (file.content && <file.content />)
+    file.content && <file.content />
   ) : (
     <Code code={file.content} lang={file.name.split(".").pop() as any} />
   )

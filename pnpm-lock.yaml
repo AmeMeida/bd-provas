@@ -11,9 +11,6 @@ dependencies:
   astro:
     specifier: ^4.5.10
     version: 4.5.10(typescript@5.4.3)
-  typescript:
-    specifier: ^5.4.3
-    version: 5.4.3
 
 devDependencies:
   '@astrojs/check':
@@ -28,6 +25,9 @@ devDependencies:
   prettier-plugin-astro:
     specifier: ^0.13.0
     version: 0.13.0
+  typescript:
+    specifier: ^5.4.3
+    version: 5.4.3
 
 packages:
 
