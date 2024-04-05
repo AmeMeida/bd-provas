@@ -33,7 +33,7 @@ jobs:
           submodules: true
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --prod
 
       - name: Build
         run: pnpm build
