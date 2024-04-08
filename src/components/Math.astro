@@ -1,0 +1,22 @@
+---
+import katex from "katex";
+
+interface Props {
+  formula: string;
+}
+
+const { formula } = Astro.props;
+
+const formulas = formula.split("\n");
+
+const htmlFrags = formulas.map((formula) => katex.renderToString(formula));
+---
+
+{
+  htmlFrags.map((html) => (
+    <>
+      <span set:html={html} />
+      <br />
+    </>
+  ))
+}

@@ -13,14 +13,18 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@picocss/pico": "^2.0.6",
     "astro": "^4.5.10",
-    "@picocss/pico": "^2.0.6"
+    "rehype-mathjax": "^6.0.0",
+    "remark-math": "^6.0.0",
+    "katex": "^0.16.10"
   },
   "devDependencies": {
-    "typescript": "^5.4.3",
     "@astrojs/check": "^0.5.10",
     "@biomejs/biome": "^1.6.3",
+    "@types/katex": "^0.16.7",
     "prettier": "^3.2.5",
-    "prettier-plugin-astro": "^0.13.0"
+    "prettier-plugin-astro": "^0.13.0",
+    "typescript": "^5.4.3"
   }
 }

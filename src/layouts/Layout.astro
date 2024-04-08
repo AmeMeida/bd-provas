@@ -20,6 +20,7 @@ const { title } = Astro.props;
     <base href={import.meta.env.BASE_URL + "/"} />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <slot name="head" />
     <ViewTransitions />
   </head>
   <body>

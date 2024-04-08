@@ -1,5 +1,5 @@
-import type { AstroComponentFactory } from "astro/runtime/server/index.js";
 import { markdownFiles } from "./markdown.astro";
+import type { MarkdownInstance } from "astro";
 
 export function slugify(text: string) {
   return text
@@ -14,7 +14,7 @@ export function slugify(text: string) {
 }
 
 export const referenceFiles = import.meta.glob(
-  "./banco-de-provas/*/**/*.{pdf,md,mdx,c,js,java,py}",
+  "./banco-de-provas/*/**/*.{pdf,md,mdx,c,js,java,py,tex}",
   {
     query: "?url",
     import: "default",
@@ -23,7 +23,7 @@ export const referenceFiles = import.meta.glob(
 ) as Record<string, string>;
 
 export const inlineFiles = import.meta.glob(
-  "./banco-de-provas/*/**/*.{c,js,java,py}",
+  "./banco-de-provas/*/**/*.{c,js,java,py,tex}",
   {
     query: "?raw",
     import: "default",
@@ -60,7 +60,11 @@ export type File = {
     }
   | {
       type: "markdown";
-      content: AstroComponentFactory;
+      content: MarkdownInstance<Record<string, unknown>>;
+    }
+  | {
+      type: "latex";
+      content: string;
     }
 );
 
@@ -73,7 +77,7 @@ export type File = {
 //   ".xls",
 //   ".xlsx",
 // ];
-const inlineFormats = [".c", ".txt", ".html", ".js", ".ts", ".json"];
+const inlineFormats = ["c", "txt", "html", "js", "ts", "json"];
 
 function addPath(files: File[], file: File) {
   if (files.some((folderFile) => folderFile.slug === file.slug)) {
@@ -101,26 +105,34 @@ function folderize(paths: Record<string, string>): Folder {
     paths.shift();
     paths.shift();
 
-    const extension = "." + paths[paths.length - 1]!.split(".").pop()!;
+    const extension = paths[paths.length - 1]!.split(".").pop()!;
 
-    const file: File = {
+    let file: File = {
       name: paths[paths.length - 1]!,
       slug: slugify(paths.join("/").replace(/\..+$/, "")),
       uri: fileUrl,
-      ...(inlineFormats.includes(extension)
-        ? {
-            type: "inline",
-            content: inlineFiles[path]!,
-          }
-        : extension === ".md" || extension === ".mdx"
-          ? {
-              type: "markdown",
-              content: markdownFiles[path]?.Content as AstroComponentFactory,
-            }
-          : {
-              type: "reference",
-            }),
+      type: "reference",
     };
+
+    if (inlineFormats.includes(extension)) {
+      file = {
+        ...file,
+        type: "inline",
+        content: inlineFiles[path]!,
+      };
+    } else if (extension === "md" || extension === "mdx") {
+      file = {
+        ...file,
+        type: "markdown",
+        content: markdownFiles[path],
+      };
+    } else if (extension === "tex") {
+      file = {
+        ...file,
+        type: "latex",
+        content: inlineFiles[path]!
+      }
+    }
 
     if (paths.length === 1) {
       addPath(rootFolder.files, file);

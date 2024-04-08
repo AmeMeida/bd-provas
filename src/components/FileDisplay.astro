@@ -1,6 +1,7 @@
 ---
 import { type File } from "@src/pdfs";
 import { Code } from "astro:components";
+import Math from "@components/Math.astro";
 
 interface Props {
   file: File;
@@ -30,7 +31,9 @@ const { file } = Astro.props;
       </a>
     </object>
   ) : file.type === "markdown" ? (
-    file.content && <file.content />
+    <file.content.Content />
+  ) : file.type === "latex" ? (
+    <Math formula={file.content} />
   ) : (
     <Code code={file.content} lang={file.name.split(".").pop() as any} />
   )
