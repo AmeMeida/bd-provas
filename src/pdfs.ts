@@ -75,7 +75,20 @@ export type File = {
 // ];
 const inlineFormats = [".c", ".txt", ".html", ".js", ".ts", ".json"];
 
-export function folderize(paths: Record<string, string>): Folder {
+function addPath(files: File[], file: File) {
+  if (files.some((folderFile) => folderFile.slug === file.slug)) {
+    file.slug += "-1";
+
+    const name = file.name.split(".")
+    name[0] += "-1"
+
+    file.name = name.join(".")
+  }
+
+  files.push(file)
+}
+
+function folderize(paths: Record<string, string>): Folder {
   const rootFolder: Folder = {
     slug: "",
     files: [],
@@ -110,7 +123,7 @@ export function folderize(paths: Record<string, string>): Folder {
     };
 
     if (paths.length === 1) {
-      rootFolder.files.push(file);
+      addPath(rootFolder.files, file)
       continue;
     }
 
@@ -139,7 +152,7 @@ export function folderize(paths: Record<string, string>): Folder {
       };
     }
 
-    current[lastFolder!]?.files.push(file);
+    addPath(current[lastFolder!]?.files!, file)
   }
 
   return rootFolder;
@@ -166,5 +179,4 @@ export function flattenFolder(folder: Folder, path: string = ""): FlatFolder[] {
 }
 
 const preFolders = folderize(referenceFiles);
-
 export const folders = flattenFolder(preFolders);
