@@ -1,5 +1,5 @@
 import { defineConfig } from "astro/config";
-import rehypeMathjax from "rehype-mathjax";
+import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
 
 // https://astro.build/config
@@ -9,6 +9,6 @@ export default defineConfig({
   prefetch: true,
   markdown: {
     remarkPlugins: [remarkMath],
-    rehypePlugins: [rehypeMathjax],
+    rehypePlugins: [rehypeKatex],
   },
 });

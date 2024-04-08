@@ -15,9 +15,9 @@
   "dependencies": {
     "@picocss/pico": "^2.0.6",
     "astro": "^4.5.10",
-    "rehype-mathjax": "^6.0.0",
-    "remark-math": "^6.0.0",
-    "katex": "^0.16.10"
+    "katex": "^0.16.10",
+    "rehype-katex": "^7.0.0",
+    "remark-math": "^6.0.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.5.10",

@@ -8,7 +8,7 @@ export const markdownFiles = Object.fromEntries(
     )
   ).map((mdFile) => [
     "./banco-de-provas/" +
-      mdFile.file.match(/.+\/banco-de-provas\/(.+?.(?:md|mdx))/)?.[1],
+      mdFile.file.match(/.+\/banco-de-provas\/(.+?\.(?:md|mdx))/)?.[1],
     mdFile,
   ]),
 );

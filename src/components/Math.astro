@@ -1,5 +1,6 @@
 ---
 import katex from "katex";
+import TexStyle from "./TexStyle.astro";
 
 interface Props {
   formula: string;
@@ -11,6 +12,8 @@ const formulas = formula.split("\n");
 
 const htmlFrags = formulas.map((formula) => katex.renderToString(formula));
 ---
+
+<TexStyle />
 
 {
   htmlFrags.map((html) => (

@@ -1,0 +1,17 @@
+---
+import TexStyle from "@components/TexStyle.astro";
+import type { MarkdownInstance } from "astro";
+
+interface Props {
+  md: MarkdownInstance<Record<string, unknown>>;
+}
+
+const { md } = Astro.props;
+
+const hasMath = md
+  .rawContent()
+  .match(/(?:```math.+```)|(?:\$\$.+\$\$)|(?:\$.+\$)/);
+---
+
+{hasMath && <TexStyle />}
+<md.Content />
